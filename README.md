@@ -1,3 +1,5 @@
+##Note: this is slightly out of date compared to my [Node implementation](https://github.com/anonymousthing/romajiconvert-js), which now uses Mecab for intelligent contextual kanji parsing instead of kakasi (which is only a lookup table). This project will be updated soon (tm). 
+
 #Information
 romajiconvert is a tool to generate (very loose) search tags for a song database that contains titles, artists and anime names with mixed ASCII/kana/kanji. The aim is for the user to be able to search for a song in romaji, and receive listings for songs that have kana and kanji titles as well.
 
