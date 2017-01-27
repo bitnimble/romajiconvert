@@ -1,51 +1,22 @@
-##Note: this is slightly out of date compared to my [Node implementation](https://github.com/anonymousthing/romajiconvert-js), which now uses Mecab for intelligent contextual kanji parsing instead of kakasi (which is only a lookup table). This project will be updated soon (tm). 
-
 #Information
-romajiconvert is a tool to generate (very loose) search tags for a song database that contains titles, artists and anime names with mixed ASCII/kana/kanji. The aim is for the user to be able to search for a song in romaji, and receive listings for songs that have kana and kanji titles as well.
+RomajiConvert is a helper library to generate romaji strings from mixed kana/kanji/english input. It was originally written to generate search tags for a song database that contains titles, artists and anime names with mixed text. The aim is for the user to be able to search for a song in romaji, and receive listings for songs that have kana and kanji titles as well.
 
 ![](https://my.mixtape.moe/qgspiq.png)
 
 #Installation
 
-Binaries for this project are located in the Github releases page.
+1. Download this project and compile it. 
+2. [Download MeCab](http://taku910.github.io/mecab/#download) and install it. The link is next to the (current) "mecab-0.996.exe" text under the "Binary package for MS-Windows" heading.
+3. Use the library. API is below. 
 
-1. Download binaries for this. 
-2. [Download binaries for kakasi](http://www.namazu.org/win32/) and extract it to `C:\kakasi`, so that the executable is at `C:\kakasi\bin\kakasi.exe`. Unfortunately, this location limitation is part of kakasi and not on my end.
-3. Download your song library metadata and stick it in the required format, naming it `songs.json` and putting it in the same directory as `romajiconvert.exe`.
-4. Run `romajiconvert.exe /generate` to generate the metadata with output tags.
-5. You can now use the javascript searcher, or test it directly with `romajiconvert.exe /search [pathToOutput.json]`. `pathToOutput.json` defaults to `output.json`, so running `romajiconvert.exe /search` is fine too. 
+# API
 
+The namespace to include is `RomajiConvert`, which will expose the `Romaji` class.
 
-#Input song metadata format
+## Romaji class
 
-The input song metadata file should be in the following json format:
-
-```
-{
-  "songs": [
-    {
-      "id": 1,
-      "artist": "artistName",
-      "title": "titleName",
-      "anime": "animeName"      
-    },
-    {
-      "id": 2,
-      "artist": "artistName",
-      "title": "titleName",
-      "anime": "animeName"  
-    },
-    {
-      "id": 3,
-      "artist": "artistName",
-      "title": "titleName",
-      "anime": "animeName"  
-    }
-  ]
-}
-```
-
-Id's between songs must be unique. 
-
-#Output metadata format
-The output format is the same as the input format, except each song will now also have a `tag` field that is the romaji of the title, artist and anime, consisting of only letters and numbers (no punctuation, unicode or spaces). 
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| Constructor | - | `Romaji` | Initialises the converter with the default custom tags (see below for a description of custom tags). The default custom tags is a common set of borrowed English words (e.g. `"ハンバーガー" -> "hamburger"` instead of `"hanbaagaa"`) |
+| Constructor | `Dictionary<string, string> customTags` | `Romaji` | Initialises the converter with the specified custom tags. Custom tags is a `Dictionary` mapping kana to English words; they are replaced inline but only if they are isolated words surrounded by non-kana text. For example, with the custom tag `"メリー" -> "Mary"`, "私はメリー" would turn into "watashi wa mary", but "メリーランドに行こう" would _not_ convert it as "メリー" is not the only kana in that kana block, resulting in "meriirando ni ikou". |
+| Convert | `string input` | `string romaji` | Converts the specified string to romaji, taking into account the custom tags. |
